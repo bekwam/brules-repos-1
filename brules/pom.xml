@@ -1,12 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.bekwam</groupId>
-  <artifactId>brules</artifactId>
-  <version>1.0.0</version>
-  
-  	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.bekwam</groupId>
+	<artifactId>brules</artifactId>
+	<version>1.2.0</version>
+	<packaging>jar</packaging>
 
 	<dependencies>
 		<dependency>
@@ -26,6 +24,16 @@
 			<version>3.0.1</version>
 		</dependency>
 	</dependencies>
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
 	<build>
 
@@ -63,6 +71,56 @@
 				</executions>
 			</plugin>
 		</plugins>
+		
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-enforcer-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals>
+											<goal>enforce</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
-	
+	<name>BRules</name>
+	<description>A collection of routines for use in Talend Open Studio</description>
+	<url>http://www.bekwam.org</url>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<id>walkerca</id>
+			<name>Carl Walker</name>
+			<email>dev@bekwam.com</email>
+		</developer>
+	</developers>
+	<scm>
+		<url>https://github.com/bekwam/brules-repos-1.git</url>
+		<connection>scm:git:https://github.com/bekwam/brules-repos-1.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:bekwam/brules-repos-1.git</developerConnection>
+	</scm>
 </project>
