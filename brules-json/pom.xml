@@ -76,7 +76,7 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	<name>BRules</name>
+	<name>BRules JSON</name>
 	<description>A supporting library of JSON methods for BRules</description>
 	<url>http://www.bekwam.org</url>
 	<licenses>
