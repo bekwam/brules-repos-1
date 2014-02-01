@@ -17,23 +17,16 @@ package routines;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -43,12 +36,8 @@ import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 public class BRules {
 
-	private final static String ERROR_MESSAGE_JRE6 = "you must run at least Java 6 to use this method";
 	private final static String ERROR_MESSAGE_LISTTYPE_ARG = "listType must be 'ul' or 'ol'";
 		
-	private final static String REGEX_EMPTY_OBJECT = "\\{\\s*\\}";
-	private final static String REGEX_EMPTY_ARRAY  = "\\[\\s*\\]";
-	
 	private final static String UTF8_CHARSET = "UTF-8";
 	
 	private final static int DEFAULT_PAD_SIZE = 10;
@@ -59,7 +48,7 @@ public class BRules {
      * 
      * {talendTypes} String
      * 
-     * {Category} Validation
+     * {Category} BRules
      * 
      * {param} string("regionCode") input: The country or region code to use
      * {param} string("phoneNumber") input: The phone number to check
@@ -76,7 +65,7 @@ public class BRules {
      * 
      * {talendTypes} String
      * 
-     * {Category} Validation
+     * {Category} BRules
      * 
      * {param} string("regionCode") input: The country or region code to use
      * {param} string("phoneNumber") input: The phone number to check
@@ -110,7 +99,7 @@ public class BRules {
      * 
      * {talendTypes} String
      * 
-     * {Category} Validation
+     * {Category} BRules
      * 
      * {param} object() input: a variable number of params to check
      * 
@@ -143,7 +132,7 @@ public class BRules {
      * 
      * {talendTypes} String
      * 
-     * {Category} Validation
+     * {Category} BRules
      * 
      * {param} object() input: a variable number of params to check
      * 
@@ -185,7 +174,7 @@ public class BRules {
 	 * 
 	 * {talendTypes} String
 	 * 
-	 * {Category} Validation
+	 * {Category} BRules
 	 * 
 	 * {param} string("hello") input : string to be tested
 	 * 
@@ -205,7 +194,7 @@ public class BRules {
      * 
      * {talendTypes} String
      * 
-     * {Category} Validation
+     * {Category} BRules
      * 
      * {param} string("<message>hello</message>") input: xml to be tested
      * {param} string("ISO8859_1") input: the charset of the xml
@@ -242,7 +231,7 @@ public class BRules {
      * 
      * {talendTypes} String
      * 
-     * {Category} Validation
+     * {Category} BRules
      * 
      * {param} string("<message>hello</message>") input: xml to be tested
      * 
@@ -264,7 +253,7 @@ public class BRules {
 	 * 
 	 * {talendTypes} String
 	 * 
-	 * {Category} Validation
+	 * {Category} BRules
 	 * 
 	 * {param} string("hello") input: string to be tested
 	 * {param} string("charset") input: charset of string
@@ -287,7 +276,7 @@ public class BRules {
 	 * 
 	 * {talendTypes} String
 	 * 
-	 * {Category} Validation
+	 * {Category} BRules
 	 * 
 	 * {param} string(_s) input string to convert
 	 * {example} toCharset("My Product\u2122") # returns "My Product "
@@ -307,7 +296,7 @@ public class BRules {
 	 * Uses Java names for charsets: Cp1252, US-ASCII
 	 * {talendTypes} String
 	 * 
-	 * {Category} Validation
+	 * {Category} BRules
 	 * 
 	 * {param} string(_s) input string to convert
 	 * {param} string(_charset) character set to use for conversion
@@ -330,7 +319,7 @@ public class BRules {
 	 * 
 	 * {talendTypes} String
 	 * 
-	 * {Category} Validation
+	 * {Category} BRules
 	 * 
 	 * {param} string(_s) input string to convert
 	 * {param} string(_charset) character set to use for conversion
@@ -363,7 +352,7 @@ public class BRules {
      * 
      * {talendTypes} String
      * 
-     * {Category} Validation
+     * {Category} BRules
      * 
      * {param} string("{name: 'Carl', program: 'BRules'}") input: json to be tested
      * 
@@ -372,60 +361,8 @@ public class BRules {
      * {example} isJSON("{}") #true
      * {example} isJSON(null) #false
      */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static boolean isJSON(String _json) {
-		
-		if( !SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_1_6) ) 
-			throw new UnsupportedOperationException(ERROR_MESSAGE_JRE6);
-		
-		if( StringUtils.isEmpty(_json) ) return false;
-		
-		if( _json.matches(REGEX_EMPTY_OBJECT) ) return true;
-		
-		if( StringUtils.equals(_json, REGEX_EMPTY_ARRAY) ) return true;
-		
-		boolean testResult = false;
-		
-/*		try {
-			ScriptEngineManager mgr = new ScriptEngineManager();
-		
-			ScriptEngine eng = mgr.getEngineByName("JavaScript");
-		
-			Object result = eng.eval(_json);
-			
-			testResult = (result!=null);
-		}
-		catch(ScriptException ignore) {} */
-		
-		try {
-			
-			// re-written using reflection to allow JRE 5 for other methods
-
-			Class clazz = Class.forName("javax.script.ScriptEngineManager");
-			
-			Method getEngineMethod = clazz.getMethod("getEngineByName", String.class);
-			
-			Object mgr_obj = clazz.newInstance();
-			
-			Object eng_obj = getEngineMethod.invoke(mgr_obj, "JavaScript");
-			
-			Class engClazz = Class.forName("javax.script.ScriptEngine");
-			
-			Method evalMethod = engClazz.getMethod("eval", String.class);
-			
-			Object result = evalMethod.invoke(eng_obj, _json);
-			
-			testResult = (result!=null);
-			
-		}
-		catch(ClassNotFoundException exc) {
-			throw new UnsupportedOperationException(ERROR_MESSAGE_JRE6);
-		}
-		catch(Exception exc) {
-			exc.printStackTrace();
-		}
-		
-		return testResult;
+	public static boolean isJSON(String _json) {		
+		return BRulesJSON.isJSON(_json);
 	}
 	
     /**
@@ -435,7 +372,7 @@ public class BRules {
      * 
      * {talendTypes} String
      * 
-     * {Category} Validation
+     * {Category} BRules
      * 
      * {param} string("{name: 'Carl', program: 'BRules'}") input: json to be tested
      * 
@@ -444,60 +381,8 @@ public class BRules {
      * {example} isJSON("{}") #true
      * {example} hasJSONPath(null) #false
      */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static boolean hasJSONPath(String _json, String _path) throws Exception {
-		
-		boolean retval = false;
-		
-		if( !SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_1_6) ) 
-			throw new UnsupportedOperationException(ERROR_MESSAGE_JRE6);
-		
-		if( StringUtils.isEmpty(_json) ) return false;
-
-		if( StringUtils.isEmpty(_path) )
-			throw new IllegalArgumentException("you must specify a json path for _path");
-
-		try {
-			
-			// re-written using reflection to allow JRE 5 for other methods
-			
-			Class clazz = Class.forName("javax.script.ScriptEngineManager");
-			
-			Method getEngineMethod = clazz.getMethod("getEngineByName", String.class);
-			
-			Object mgr_obj = clazz.newInstance();
-			
-			Object eng_obj = getEngineMethod.invoke(mgr_obj, "JavaScript");
-			
-			Class engClazz = Class.forName("javax.script.ScriptEngine");
-			
-			Method evalMethod = engClazz.getMethod("eval", String.class);
-			Method evalMethod_rdr = engClazz.getMethod("eval", Reader.class);
-			Method putMethod = engClazz.getMethod("put", String.class, Object.class);
-			
-			InputStream is = new Object().getClass().getResourceAsStream("/js/jsonpath-0.8.0.js");
-			Reader reader = new InputStreamReader(is);
-			
-			evalMethod_rdr.invoke(eng_obj, reader);
-			evalMethod.invoke(eng_obj, "var j=" + _json + ";");
-			evalMethod.invoke(eng_obj, "var jsArray = jsonPath(j, '" + _path + "')");
-			
-			List<String> javaArray = new ArrayList<String>();
-			
-			putMethod.invoke(eng_obj, "javaArray", javaArray);
-			
-			evalMethod.invoke(eng_obj, "for( i=0; i<jsArray.length; i++ ) { javaArray.add(jsArray[i]); }");
-			
-			retval = javaArray != null && javaArray.size()>0;
-		}
-		catch(ClassNotFoundException exc) {
-			throw new UnsupportedOperationException(ERROR_MESSAGE_JRE6);
-		}
-		catch(Exception exc) {
-			exc.printStackTrace();
-		}
-
-		return retval;
+		return BRulesJSON.hasJSONPath(_json, _path);
 	}
 	
     /**
@@ -508,7 +393,7 @@ public class BRules {
      * 
      * {talendTypes} String
      * 
-     * {Category} Validation
+     * {Category} BRules
      * 
      * {param} object() input: a variable number of strings to join
      * 
@@ -526,7 +411,7 @@ public class BRules {
      * 
      * {talendTypes} String
      * 
-     * {Category} Validation
+     * {Category} BRules
      * 
      * {param} object() input: a variable number of strings to join
      * 
@@ -563,7 +448,7 @@ public class BRules {
      * 
      * {talendTypes} String
      * 
-     * {Category} Validation
+     * {Category} BRules
      * 
      * {param} styleClass : a style to apply for the toplevel list element
      * {param} object() input: a variable number of strings to join
@@ -582,7 +467,7 @@ public class BRules {
      * 
      * {talendTypes} String
      * 
-     * {Category} Validation
+     * {Category} BRules
      * 
      * {param} styleClass : a style to apply for the toplevel list element
      * {param} object() input: a variable number of strings to join
@@ -627,7 +512,7 @@ public class BRules {
      * 
      * {talendTypes} String
      * 
-     * {Category} Validation
+     * {Category} BRules
      * 
      * {param} styleClass : a style to apply for the toplevel list element
      * {param} object() input: a variable number of strings to join
@@ -654,7 +539,7 @@ public class BRules {
      * 
      * {talendTypes} String
      * 
-     * {Category} User Defined
+     * {Category} BRules
      * 
      * {param} pad(string) input: The string to be divided
      * 
@@ -675,7 +560,7 @@ public class BRules {
 	 *
      * {talendTypes} String
      * 
-     * {Category} User Defined
+     * {Category} BRules
      * 
      * {param} pad(string) input: The string to be divided
      * 
@@ -695,7 +580,7 @@ public class BRules {
      * 
      * {talendTypes} String
      * 
-     * {Category} User Defined
+     * {Category} BRules
      * 
      * {param} trimLeadingZeros(string) input: The string to be divided
      * 
