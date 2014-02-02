@@ -18,6 +18,7 @@ package routines;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 import java.util.regex.Pattern;
 
@@ -309,8 +310,8 @@ public class BRulesTest {
 				"abc", 
 				"12345678901"
 				};
-		assertEquals("          ", BRules.pad(a[0]));
-		assertEquals("          ", BRules.pad(a[1]));
+		assertNull( BRules.pad(a[0]) );
+		assertEquals("", BRules.pad(a[1]));
 		assertEquals("         a", BRules.pad(a[2]));
 		assertEquals("       abc", BRules.pad(a[3]));
 		assertEquals("12345678901", BRules.pad(a[4]));
@@ -325,11 +326,73 @@ public class BRulesTest {
 				"abc", 
 				"12345678901"
 				};
-		assertEquals("       ", BRules.pad(a[0], 7));
-		assertEquals("       ", BRules.pad(a[1], 7));
+		assertNull( BRules.pad(a[0], 7) );
+		assertEquals("", BRules.pad(a[1], 7));
 		assertEquals("      a", BRules.pad(a[2], 7));
 		assertEquals("    abc", BRules.pad(a[3], 7));
 		assertEquals("12345678901", BRules.pad(a[4], 7));
+	}
+	
+	@Test
+	public void padIntegerToSize() {
+		assertNull( BRules.pad((Integer)null, 6, '0') );		
+		assertEquals("000100", BRules.pad(100, 6, '0'));
+		assertEquals("1000000", BRules.pad(1000000, 6, '0'));
+	}
+
+	@Test
+	public void padLongToSize() {
+		assertNull( BRules.pad((Long)null, 6, '0') );		
+		assertEquals("000100", BRules.pad(100L, 6, '0'));
+		assertEquals("1000000", BRules.pad(1000000L, 6, '0'));
+	}
+
+	@Test
+	public void padWithChar() {
+		String[] a = {
+				null, 
+				"", 
+				"a", 
+				"abc", 
+				"12345678901"
+				};
+		assertNull( BRules.pad(a[0], 7, '0') );
+		assertEquals("", BRules.pad(a[1], 7, '0'));
+		assertEquals("000000a", BRules.pad(a[2], 7, '0'));
+		assertEquals("0000abc", BRules.pad(a[3], 7, '0'));
+		assertEquals("12345678901", BRules.pad(a[4], 7, '0'));
+	}
+
+	@Test
+	public void padRightToSize() {
+		String[] a = {
+				null, 
+				"", 
+				"a", 
+				"abc", 
+				"12345678901"
+				};
+		assertNull( BRules.padRight(a[0], 7) );
+		assertEquals("", BRules.padRight(a[1], 7));
+		assertEquals("a      ", BRules.padRight(a[2], 7));
+		assertEquals("abc    ", BRules.padRight(a[3], 7));
+		assertEquals("12345678901", BRules.padRight(a[4], 7));
+	}
+
+	@Test
+	public void padRightWithChar() {
+		String[] a = {
+				null, 
+				"", 
+				"a", 
+				"abc", 
+				"12345678901"
+				};
+		assertNull( BRules.padRight(a[0], 7, '0') );
+		assertEquals("", BRules.padRight(a[1], 7, '0'));
+		assertEquals("a000000", BRules.padRight(a[2], 7, '0'));
+		assertEquals("abc0000", BRules.padRight(a[3], 7, '0'));
+		assertEquals("12345678901", BRules.padRight(a[4], 7, '0'));
 	}
 	
 	@Test
