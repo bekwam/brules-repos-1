@@ -301,6 +301,7 @@ public class BRulesTest {
 		assertEquals("<p class=\"note\">one</p>", BRules.p("note", "one"));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void pad() {
 		String[] a = {
