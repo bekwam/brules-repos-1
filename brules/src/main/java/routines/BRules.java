@@ -34,12 +34,17 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
+/**
+ * BRules is a collection of Java methods used for validation, formatting, and 
+ * transformation.
+ * 
+ * @author Carl2
+ * @since 1.0.0
+ */
 public class BRules {
 
-	private final static String ERROR_MESSAGE_LISTTYPE_ARG = "listType must be 'ul' or 'ol'";
-		
-	private final static String UTF8_CHARSET = "UTF-8";
-	
+	private final static String ERROR_MESSAGE_LISTTYPE_ARG = "listType must be 'ul' or 'ol'";		
+	private final static String UTF8_CHARSET = "UTF-8";	
 	private final static int DEFAULT_PAD_SIZE = 10;
 	
     /**
@@ -537,45 +542,167 @@ public class BRules {
      * 
      * If the string exceeds 10 chars, the input string will be returned
      * 
+     * The method is deprecated because of the limited utility in a predefined
+     * size.
+     * 
      * {talendTypes} String
      * 
      * {Category} BRules
      * 
-     * {param} pad(string) input: The string to be divided
+     * {param} pad(stringToPad) input: The string to be divided
      * 
-     * {example} pad(null) ->     "          "
-     * {example} pad("") ->       "            "
-     * {example} pad("100") ->    "         100"
-     * {example} pad("abcdef") -> "      abcdef"
+     * {example} pad("100") # "         100"
      */		
+	@Deprecated
 	public static String pad(String s) {
 		return pad(s, DEFAULT_PAD_SIZE);
 	}
 	
     /**
-     * Pads the specified string with spaces
+     * Left pads the input string with spaces
      * 
-     * If the string exceeds the specified # of chars, the input string will be 
-     * returned
-	 *
      * {talendTypes} String
      * 
      * {Category} BRules
      * 
-     * {param} pad(string) input: The string to be divided
+     * {param} string(stringToPad) stringToPad: string to pad 
+     * {param} int(numPadChars) numPadChars: number of padded chars
      * 
-     * {example} pad(null) ->        "      "
-     * {example} pad("", 10) ->      "      "
-     * {example} pad("100", 6) ->    "   100"
-     * {example} pad("abcdef", 6) -> "abcdef"
+     * {example} pad("100",6) # "000100"
+     * 
+     * @param s - input string to pad
+     * @param size - number of chars to pad
+     * @return padded string or input string
+     * @since 1.0.0
      */		
 	public static String pad(String s, int size) {
 		if( size < 0 ) throw new IllegalArgumentException("size must be > 0");
-		if( s == null ) s = "";
-		return String.format("%" + size + "s", s);		
+		if( StringUtils.isEmpty(s) ) return s;
+		return StringUtils.leftPad(s, size);
 	}	
 	
     /**
+     * Left pads the input string with the specified character
+     * 
+     * {talendTypes} String
+     * 
+     * {Category} BRules
+     * 
+     * {param} string(stringToPad) stringToPad: string to pad 
+     * {param} int(numPadChars) numPadChars: number of padded chars
+     * {param} char(charToUse) charToUse: char to use as padding
+     * 
+     * {example} pad("100", 6, '0') # "000100"
+     * 
+     * @param s - input string to pad
+     * @param size - number of chars to pad
+     * @param ch - character to pad with
+     * @return padded string or input string
+     * @since 1.4.0
+     */		
+	public static String pad(String s, int size, char ch) {
+		if( size < 0 ) throw new IllegalArgumentException("size must be > 0");
+		if( StringUtils.isEmpty(s) ) return s;
+		return StringUtils.leftPad(s, size, ch);
+	}	
+	
+    /**
+     * Left pads the input integer with the specified character
+     * 
+     * {talendTypes} String
+     * 
+     * {Category} BRules
+     * 
+     * {param} int(integerToPad) integerToPad: int to pad 
+     * {param} int(numPadChars) numPadChars: number of padded chars
+     * {param} char(charToUse) charToUse: char to use as padding
+     * 
+     * {example} pad(100, 6, '0') # "000100"
+     * 
+     * @param s - input string to pad
+     * @param size - number of chars to pad
+     * @param ch - character to pad with
+     * @return padded string or input string
+     * @since 1.4.0
+     */		
+	public static String pad(Integer i, int size, char ch) {
+		if( i == null ) return null;
+		return StringUtils.leftPad(String.valueOf(i), size, ch);
+	}	
+
+    /**
+     * Left pads the input long with the specified character
+     * 
+     * {talendTypes} String
+     * 
+     * {Category} BRules
+     * 
+     * {param} long(integerToPad) integerToPad: int to pad 
+     * {param} long(numPadChars) numPadChars: number of padded chars
+     * {param} char(charToUse) charToUse: char to use as padding
+     * 
+     * {example} pad(100L, 6, '0') # "000100"
+     * 
+     * @param s - input string to pad
+     * @param size - number of chars to pad
+     * @param ch - character to pad with
+     * @return padded string or input string
+     * @since 1.4.0
+     */		
+	public static String pad(Long lng, int size, char ch) {
+		if( lng == null ) return null;
+		return StringUtils.leftPad(String.valueOf(lng), size, ch);
+	}	
+	
+	/**
+     * Right pads the input string with spaces
+     * 
+     * {talendTypes} String
+     * 
+     * {Category} BRules
+     * 
+     * {param} string(stringToPad) stringToPad: string to pad 
+     * {param} int(numPadChars) numPadChars: number of padded chars
+     * 
+     * {example} pad("100", 6) # "100   "
+     * 
+     * @param s - input string to pad
+     * @param size - number of chars to pad
+     * @return padded string or input string
+     * @since 1.4.0
+     */		
+	public static String padRight(String s, int size) {
+		if( size < 0 ) throw new IllegalArgumentException("size must be > 0");
+		if( StringUtils.isEmpty(s) ) return s;
+		return StringUtils.rightPad(s, size);
+	}	
+
+	/**
+     * Right pads the input string with the specified character
+     * 
+     * {talendTypes} String
+     * 
+     * {Category} BRules
+     * 
+     * {param} string(stringToPad) stringToPad: string to pad 
+     * {param} int(numPadChars) numPadChars: number of padded chars
+     * {param} char(charToUse) charToUse: char to use as padding
+     * 
+     * {example} pad("100", 6, '0') # "100000"
+     * 
+     * @param s - input string to pad
+     * @param size - number of chars to pad
+     * @param ch - character to pad with
+     * @return padded string or input string
+     * @since 1.4.0
+     */		
+	public static String padRight(String s, int size, char ch) {
+		if( size < 0 ) throw new IllegalArgumentException("size must be > 0");
+		if( StringUtils.isEmpty(s) ) return s;
+		return StringUtils.rightPad(s, size, ch);
+	}	
+	
+	/**
      * Take off leading zeros; assumes a number
      * 
      * {talendTypes} String
