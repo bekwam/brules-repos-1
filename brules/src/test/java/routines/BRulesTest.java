@@ -17,14 +17,17 @@ package routines;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
+import org.joda.time.LocalDate;
 import org.junit.Test;
-
-import routines.BRules;
 
 public class BRulesTest {
 
@@ -414,4 +417,129 @@ public class BRulesTest {
 		assertEquals("999", BRules.trimLeadingZeros(a[4]));
 		assertEquals("abc", BRules.trimLeadingZeros(a[5]));
 	}
+	
+	@Test
+	public void ageInYearsToday() {
+
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, 1980);
+		cal.set(Calendar.MONTH, 1);
+		cal.set(Calendar.DAY_OF_MONTH, 8);
+		
+		Date birthDate = cal.getTime();
+			
+		int age = BRules.ageInYears(birthDate);
+		
+		assertTrue( age >= 34 );
+	}
+
+	@Test
+	public void ageInYears() {
+		
+		LocalDate birthDate = new LocalDate(1980, 2, 8);
+		LocalDate asOfDate = new LocalDate(2014, 2, 8);
+		
+		assertEquals( 34, (int)BRules.ageInYears(birthDate, asOfDate) );
+	}
+	
+	@Test
+	public void nullBirthDate() {
+		LocalDate asOfDate = new LocalDate(2014, 2, 8);
+		assertNull( BRules.ageInYears(null, asOfDate) );
+	}
+
+	@Test
+	public void nullAsOfDate() {
+		LocalDate birthDate = new LocalDate(1980, 2, 8);
+		assertNull( BRules.ageInYears(birthDate, null) );
+	}
+
+	@Test
+	public void nullBirthDateJava() {
+		assertNull( BRules.ageInYears(null, new Date()) );
+	}
+
+	@Test
+	public void nullAsOfDateJava() {
+		assertNull( BRules.ageInYears(new Date(), null) );
+	}
+
+	@Test
+	public void ageInYearsJava() {
+		
+		Calendar birthDate_c = Calendar.getInstance();
+		birthDate_c.set(Calendar.YEAR, 1980);
+		birthDate_c.set(Calendar.MONTH, 1);
+		birthDate_c.set(Calendar.DAY_OF_MONTH, 8);
+		
+		Date birthDate = birthDate_c.getTime();
+
+		Calendar asOfDate_c = Calendar.getInstance();
+		asOfDate_c.set(Calendar.YEAR, 2014);
+		asOfDate_c.set(Calendar.MONTH, 1);
+		asOfDate_c.set(Calendar.DAY_OF_MONTH, 8);
+		
+		Date asOfDate = asOfDate_c.getTime();
+
+		assertEquals( 34, (int)BRules.ageInYears(birthDate, asOfDate) );
+	}
+
+	@Test
+	public void nullList() {
+		assertEquals( "", BRules.listToString(null) );
+	}
+	
+	@Test
+	public void emptyList() {
+		List<String> list= new ArrayList<String>();
+		assertEquals( "", BRules.listToString(list) );
+	}
+	
+	@Test
+	public void threeItems() {
+		List<String> list = new ArrayList<String>();
+		list.add( "Coke" );
+		list.add( "Pepsi" );
+		list.add( "7-Up" );
+		assertEquals( "Coke,Pepsi,7-Up", BRules.listToString(list));
+	}
+	
+	@Test
+	public void threeIntegerItems() {
+		List<Integer> list = new ArrayList<Integer>();
+		list.add( 1 );
+		list.add( 2 );
+		list.add( 3 );
+		assertEquals( "1,2,3", BRules.listToString(list));
+	}
+
+	@Test
+	public void missingItem() {
+		List<String> list = new ArrayList<String>();
+		list.add( "Coke" );
+		list.add( null );
+		list.add( "7-Up" );
+		assertEquals( "Coke,,7-Up", BRules.listToString(list));
+	}
+
+	
+	@Test
+	public void altDelimiter() {
+		List<String> list = new ArrayList<String>();
+		list.add( "Coke" );
+		list.add( "Pepsi" );
+		list.add( "7-Up" );
+		assertEquals( "Coke|Pepsi|7-Up", BRules.listToString(list, "|"));
+	}
+
+	@Test
+	public void escapeItems() {
+		List<String> list = new ArrayList<String>();
+		list.add( "Coke" );
+		list.add( "Pepsi" );
+		list.add( "7-Up" );
+		assertEquals( "'Coke','Pepsi','7-Up'", BRules.listToString(list, ",", "'"));
+	}
+	
+
 }

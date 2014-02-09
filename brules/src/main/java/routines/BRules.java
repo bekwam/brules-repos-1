@@ -22,11 +22,15 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
+import java.util.Date;
+import java.util.List;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalDate;
+import org.joda.time.Years;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -46,7 +50,8 @@ public class BRules {
 	private final static String ERROR_MESSAGE_LISTTYPE_ARG = "listType must be 'ul' or 'ol'";		
 	private final static String UTF8_CHARSET = "UTF-8";	
 	private final static int DEFAULT_PAD_SIZE = 10;
-	
+	private final static String DEFAULT_LIST_TO_STRING_DELIMITER = ",";
+
     /**
      * isPhoneNum: true if valid in accordance with country specifier; uses
      * strict check
@@ -723,5 +728,163 @@ public class BRules {
 		catch(NumberFormatException exc) {
 			return num_s;
 		}
+	}
+	
+	/**
+     * Calculates age in whole years based on today's date
+     * 
+     * {talendTypes} Integer
+     * 
+     * {Category} BRules
+     * 
+     * {param} date(birthDate) input: the date of birth
+     * 
+     * @param birthDate date of birth
+     * @return whole years of age
+     * 
+     */		
+	public static Integer ageInYears(Date birthDate) {
+		return ageInYears(birthDate, new Date());
+	}
+	
+	/**
+     * Calculates age in whole years using the specified
+     * as of date
+     * 
+     * Returns null if birthDate or asOfDate is null
+     * 
+     * {talendTypes} Integer
+     * 
+     * {Category} BRules
+     * 
+     * {param} date(birthDate) input: the date of birth
+     * {param} date(asOfDate) input: date used for comparison; alternative to
+     * today
+     * 
+     * @param birthDate date of birth
+     * @param asOfDate date of comparison (instead of today)
+     * @return whole years of age
+     */		
+	public static Integer ageInYears(Date birthDate, Date asOfDate) {
+		
+		if( birthDate == null || asOfDate == null ) {
+			return null;
+		}
+
+		return ageInYears(new LocalDate(birthDate), new LocalDate(asOfDate));		
+	}
+
+	/**
+	 * For internal use only
+	 * 
+	 * Joda Time classes aren't exposed to the calling Talend jobs because of
+	 * library dependency management
+	 * 
+     * @param birthDate date of birth
+     * @param asOfDate date of comparison (instead of today)
+     * @return whole years of age
+	 */
+	static Integer ageInYears(LocalDate birthDate, LocalDate asOfDate) {
+
+		if( birthDate == null || asOfDate == null ) {
+			return null;
+		}
+		
+		Years age = Years.yearsBetween(birthDate, asOfDate);
+		
+		return age.getYears();		
+	}
+	
+	/**
+	 * Forms a comma-separated list given the input java.util.List
+	 * 
+	 * Handles different types
+	 * 
+	 * Nulls are skipped, for example [A, null, B] -> A,,B
+	 * 
+	 * {talendTypes} String
+	 * 
+	 * {Category} BRules
+	 * 
+     * {param} list(inputList) input: the list to convert
+     * 
+	 * @param inputList list of objects of any time
+	 * @return empty string or list of values separated by comma
+	 */
+	public static String listToString(List<?> inputList) {
+		return listToString(inputList, DEFAULT_LIST_TO_STRING_DELIMITER);
+	}
+	
+	/**
+	 * Forms a comma-separated list given the input java.util.List using the 
+	 * specified delimeter
+	 * 
+	 * Handles different types
+	 * 
+	 * Nulls are skipped, for example [A, null, B] -> A,,B
+	 * 
+	 * {talendTypes} String
+	 * 
+	 * {Category} BRules
+	 * 
+     * {param} list(inputList) input: the list to convert
+     * {param} string(delimiter) input: delimiter to used in string separating
+     * items
+     * 
+	 * @param inputList list of objects of any time
+	 * @return empty string or list of values separated by delimiter 
+	 * 
+	 */
+	public static String listToString(List<?> inputList, String delimiter) {
+		return listToString(inputList, delimiter, null);
+	}
+	
+	/**
+	 * Forms a comma-separated list given the input java.util.List
+	 * 
+	 * Handles different types
+	 * 
+	 * Nulls are skipped, for example [A, null, B] -> A,,B
+	 * 
+	 * {talendTypes} String
+	 * 
+	 * {Category} BRules
+	 * 
+     * {param} list(inputList) input: the list to convert
+     * {param} string(delimiter) input: delimiter to used in string separating
+     * items
+     * {param} string(escapeString) input: string to wrap each item
+     * 
+	 * @param inputList list of objects of any time
+	 * @param escapeString String added to start and end of each element
+	 * @return empty string or list of values separated by comma
+	 */
+	public static String listToString(List<?> inputList, String delimiter, String escapeString) {
+
+		StringBuffer sb = new StringBuffer("");
+		
+		if( inputList == null ) {
+			return sb.toString();
+		}
+		
+		boolean initialized = false;
+		for( Object obj : inputList ) {
+			
+			if( initialized ) {
+				sb.append(delimiter);
+			} else {
+				initialized = true;
+			}
+
+			if( obj != null ) {
+				if( escapeString == null ) {
+					sb.append( String.valueOf(obj) );					
+				} else {	
+					sb.append( escapeString + String.valueOf(obj) + escapeString );
+				}
+			}
+		}
+		
+		return sb.toString();
 	}
 }
