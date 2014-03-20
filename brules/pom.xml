@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.bekwam</groupId>
 	<artifactId>brules</artifactId>
-	<version>1.5.0</version>
+	<version>1.6.0</version>
 	<packaging>jar</packaging>
 
 	<dependencies>
@@ -26,7 +26,7 @@
 		<dependency>
 			<groupId>org.bekwam</groupId>
 			<artifactId>brules-json</artifactId>
-			<version>1.5.0</version>
+			<version>1.6.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
@@ -112,7 +112,26 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			<plugin>
+				<groupId>org.bekwam</groupId>
+				<artifactId>talendroutine-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<configuration>
+					<label>BRules</label>
+					<purpose>Validation, conversion, and shorthand utilities</purpose>
+					<description>A collection of functions for validating data, converting data, and shortening expressions</description>
+					<version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}</version>
+					<path>bekwam</path>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 
 		<pluginManagement>

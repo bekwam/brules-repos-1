@@ -10,7 +10,7 @@
 
 	<files>
 		<file>
-			<source>src/main/resources/talend.project</source>
+			<source>${project.build.directory}/TALENDROUTINE/talend.project</source>
 			<outputDirectory>TALENDPROJECT</outputDirectory>
 			<destName>talend.project</destName>
 		</file>
@@ -20,7 +20,7 @@
 			<destName>BRules_${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.item</destName>
 		</file>
 		<file>
-			<source>src/main/resources/BRules.properties</source>
+			<source>${project.build.directory}/TALENDROUTINE/BRules_${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.properties</source>
 			<outputDirectory>TALENDPROJECT/code/routines/bekwam</outputDirectory>
 			<destName>BRules_${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.properties</destName>
 		</file>
