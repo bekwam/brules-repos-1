@@ -887,4 +887,21 @@ public class BRules {
 		
 		return sb.toString();
 	}
+	
+	/**
+	 * Short-hand and null-safe routine to find the length of a String
+	 * 
+	 * {talendTypes} String
+	 * 
+	 * {Category} BRules
+	 * 
+     * {param} string(s): string to measure
+     * 
+	 * @param input string
+	 * @return length of string; 0 if null
+	 */
+	public static int len(String s) {
+		return StringUtils.length(s);
+	}
+
 }

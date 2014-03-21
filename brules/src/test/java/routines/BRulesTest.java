@@ -541,5 +541,14 @@ public class BRulesTest {
 		assertEquals( "'Coke','Pepsi','7-Up'", BRules.listToString(list, ",", "'"));
 	}
 	
-
+	@Test
+	public void len() {
+		String s = "testme";
+		assertEquals( 6, BRules.len(s) );		
+	}
+	
+	@Test
+	public void nullLen() {
+		assertEquals( 0, BRules.len(null) );
+	}
 }
