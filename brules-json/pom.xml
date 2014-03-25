@@ -98,4 +98,16 @@
 		<connection>scm:git:https://github.com/bekwam/brules-repos-1.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com:bekwam/brules-repos-1.git</developerConnection>
 	</scm>
+	<issueManagement>
+		<system>DoneDone</system>
+		<url>http://www.getdonedone.com/</url>
+	</issueManagement>
+	<ciManagement>
+		<url>http://www.getdonedone.com/</url>
+		<system>CloudBees - Jenkins</system>
+	</ciManagement>
+	<organization>
+		<name>Bekwam.org</name>
+		<url>http://www.bekwam.org</url>
+	</organization>
 </project>
